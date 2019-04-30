@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#L-System(Lindenmayer system)是一种用字符串替代产生分形图形的算法
 from math import sin, cos, pi
 import matplotlib.pyplot as pl
 from matplotlib import collections
@@ -7,14 +9,14 @@ class L_System(object):
         info = rule['S']
         for i in range(rule['iter']):
             ninfo = []
-        for c in info:
-            if c in rule:
-                ninfo.append(rule[c])
-            else:
-                ninfo.append(c)
-                info = "".join(ninfo)
-                self.rule = rule
-                self.info = info
+            for c in info:
+                if c in rule:
+                    ninfo.append(rule[c])
+                else:
+                    ninfo.append(c)
+            info = "".join(ninfo)
+        self.rule = rule
+        self.info = info
 
     def get_lines(self):
         d = self.rule['direct']
@@ -24,19 +26,19 @@ class L_System(object):
         lines = []
         stack = []
         for c in self.info:
-                if c in "Ff":
-                    r = d * pi / 180
-                    t = p[0] + l*cos(r), p[1] + l*sin(r)
-                    lines.append(((p[0], p[1]), (t[0], t[1])))
-                    p = t
-                elif c == "+":
-                    d += a
-                elif c == "-":
-                    d -= a
-                elif c == "[":
-                    stack.append((p,d))
-                elif c == "]":
-                    p, d = stack[-1]
+            if c in "Ff":
+                r = d * pi / 180
+                t = p[0] + l*cos(r), p[1] + l*sin(r)
+                lines.append(((p[0], p[1]), (t[0], t[1])))
+                p = t
+            elif c == "+":
+                d += a
+            elif c == "-":
+                d -= a
+            elif c == "[":
+                stack.append((p,d))
+            elif c == "]":
+                p, d = stack[-1]
                 del stack[-1]
         return lines
 
@@ -70,23 +72,23 @@ rules = [
         "title":"Plant"
     },
     {
-        "S":"X", "X":"-YF+XFX+", "Y":"+XF-YFY-FX+",
+        "S":"X", "X":"-YF+XFX+FY-", "Y":"+XF-YFY-FX+",
         "direct":0,
         "angle":90,
         "iter":6,
         "title":"Hilbert"
     },
     {
-        "S":"L--F--L--F", "L":"+R-F-R+", "R":"-L+F+",
+        "S":"L--F--L--F", "L":"+R-F-R+", "R":"-L+F+L-",
         "direct":0,
         "angle":45,
         "iter":10,
         "title":"Sierpinski"
     },
-
 ]
+
 def draw(ax, rule, iter=None):
-    if iter != None:
+    if iter!=None:
         rule["iter"] = iter
     lines = L_System(rule).get_lines()
     linecollections = collections.LineCollection(lines)
@@ -95,10 +97,13 @@ def draw(ax, rule, iter=None):
     ax.set_axis_off()
     ax.set_xlim(ax.dataLim.xmin, ax.dataLim.xmax)
     ax.invert_yaxis()
-fig = pl.figure(figsize=(7, 4.5))
-fig.patch.set_facecolor("papayawhip")
+
+fig = pl.figure(figsize=(7,4.5))
+fig.patch.set_facecolor("w")
+
 for i in range(6):
-    ax = fig.add_subplot(231 + i)
-draw(ax, rules[i])
-fig.subplots_adjust(left=0, right=1, bottom=0, top=1, wspace=0, hspace=0)
+    ax = fig.add_subplot(231+i)
+    draw(ax, rules[i])
+
+fig.subplots_adjust(left=0,right=1,bottom=0,top=1,wspace=0,hspace=0)
 pl.show()
